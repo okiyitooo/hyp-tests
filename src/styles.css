@@ -1,0 +1,105 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.app-container {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "controls visualization"
+        "legend visualization";
+    grid-template-columns: 350px 1fr;
+    grid-gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+header {
+    grid-area: header;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.controls-panel {
+    grid-area: controls;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.visualization-panel {
+    grid-area: visualization;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    min-height: 400px; /* For chart */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.legend-panel {
+    grid-area: legend;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.control-group input[type="number"],
+.control-group select {
+    width: calc(100% - 12px); /* Account for padding/border */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+.control-group input[type="number"]:disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+}
+
+
+.display-value {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.legend-item {
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+.legend-item input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+footer {
+    grid-area: footer; /* This won't work with current grid, but good for global messages */
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
+    color: #777;
+}
