@@ -21,13 +21,16 @@ export const initialState = {
     criticalValue2: null, // For two-tailed
     zAlpha: null, // Z-score for alpha
     zBeta: null,  // Z-score for beta (related to power)
+    standardErrorH0: null, // Standard error for H₀
+    standardErrorHa: null, // Standard error for Hₐ
 
     // --- Visualization Data (placeholder structures) ---
     h0DistPoints: [],     // [{x, y}, ...]
     haDistPoints: [],     // [{x, y}, ...]
-    type1AreaCoords: [],  // Polygon points for alpha area
-    type2AreaCoords: [],  // Polygon points for beta area
-    powerAreaCoords: [],  // Polygon points for power area
+    alphaAreaPoints: [],
+    betaAreaPoints: [],
+    powerAreaPoints: [], // Can be one or two arrays for two-tailed
+
 
     // --- UI State for Legend ---
     showH0Distribution: true,
@@ -50,24 +53,48 @@ export const appReducer = (state, action) => {
             return { ...state, [action.payload.param]: action.payload.value };
 
         case 'SET_TEST_TYPE':
-            const isMeanTest = action.payload === 'one-sample-mean';
+            const isMeanTest = action.payload.includes('sample-mean');
+            const newH0 = isMeanTest ? (state.h0Value || 100) : 0.5; // Default for proportion
+            const newActual = isMeanTest ? (state.actualParam || 105) : 0.5; // Default for proportion
             return {
                 ...state,
                 testType: action.payload,
                 // Reset stdDev if switching to proportion, or use a default if switching to mean
                 stdDev: isMeanTest ? (state.stdDev || 15) : '', // Or null
-                h0Value: isMeanTest ? (state.h0Value || 100) : 0.5,
-                actualParam: isMeanTest ? (state.actualParam || 105) : 0.6,
+                h0Value: newH0,
+                actualParam: newActual,
+                power: null,
+                beta: null,
+                criticalValue1: null,
+                criticalValue2: null,
+                zAlpha: null,
+                standardErrorH0: null,
+                standardErrorHa: null,
+                h0DistPoints: [],
+                haDistPoints: [],
+                alphaAreaPoints: [],
+                betaAreaPoints: [],
+                powerAreaPoints: [],
             };
 
         case 'SET_H0_VALUE':
-            return { ...state, h0Value: parseFloat(action.payload) || 0 };
+            let h0Val = parseFloat(action.payload);
+            if (state.testType.includes('sample-proportion')) {
+                if (isNaN(h0Val) || h0Val <= 0) h0Val = 0.01;
+                if (h0Val >= 1) h0Val = 0.99;
+            }
+            return { ...state, h0Value: h0Val || 0 };
 
         case 'SET_HA_TYPE':
             return { ...state, haType: action.payload };
 
         case 'SET_ACTUAL_PARAM':
-            return { ...state, actualParam: parseFloat(action.payload) || 0 };
+            let actualVal = parseFloat(action.payload);
+            if (state.testType.includes('sample-proportion')) {
+                if (isNaN(actualVal) || actualVal <= 0) actualVal = 0.01;
+                if (actualVal >= 1) actualVal = 0.99;
+            }
+            return { ...state, actualParam: actualVal || 0 };
 
         case 'SET_SAMPLE_SIZE':
             const n = parseInt(action.payload, 10);
@@ -103,13 +130,20 @@ export const appReducer = (state, action) => {
             return {
                 ...state,
                 isLoading: false,
-                power: action.payload.power,
-                beta: action.payload.beta,
-                criticalValue1: action.payload.criticalValue1,
-                criticalValue2: action.payload.criticalValue2,
-                zAlpha: action.payload.zAlpha,
-                zBeta: action.payload.zBeta,
+                error: action.payload.error || null,
+                power: action.payload.error ? null : action.payload.power,
+                beta: action.payload.error ? null : action.payload.beta,
+                criticalValue1: action.payload.error ? null : action.payload.criticalValue1,
+                criticalValue2: action.payload.error ? null : action.payload.criticalValue2,
+                zAlpha: action.payload.error ? null : action.payload.zAlpha,
+                standardErrorH0: action.payload.error ? null : action.payload.standardErrorH0,
+                standardErrorHa: action.payload.error ? null : action.payload.standardErrorHa,
                 // Potentially update h0DistPoints, haDistPoints etc. here too
+                h0DistPoints: action.payload.h0DistPoints || [],
+                haDistPoints: action.payload.haDistPoints || [],
+                alphaAreaPoints: action.payload.alphaAreaPoints || [],
+                betaAreaPoints: action.payload.betaAreaPoints || [],
+                powerAreaPoints: action.payload.powerAreaPoints || [],
                 // For now, just core calculated stats
             };
         case 'VISUALIZATION_DATA_UPDATED':
@@ -117,13 +151,24 @@ export const appReducer = (state, action) => {
                 ...state,
                 h0DistPoints: action.payload.h0DistPoints,
                 haDistPoints: action.payload.haDistPoints,
-                type1AreaCoords: action.payload.type1AreaCoords,
-                type2AreaCoords: action.payload.type2AreaCoords,
-                powerAreaCoords: action.payload.powerAreaCoords,
+                powerAreaPoints: action.payload.powerAreaPoints,
+                alphaAreaPoints: action.payload.alphaAreaPoints,
+                betaAreaPoints: action.payload.betaAreaPoints,
              };
 
         case 'CALCULATION_ERROR':
-            return { ...state, isLoading: false, error: action.payload, power: null, beta: null };
+            return { 
+                ...state, 
+                isLoading: false, 
+                error: action.payload, 
+                power: null, 
+                beta: null, 
+                h0DistPoints: [],
+                haDistPoints: [],
+                alphaAreaPoints: [],
+                betaAreaPoints: [],
+                powerAreaPoints: [],
+            };
 
         default:
             return state;

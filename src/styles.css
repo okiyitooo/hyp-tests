@@ -1,105 +1,264 @@
 body {
-    font-family: sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                 sans-serif;
     margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
+    padding: 0; /* Remove default body padding */
+    background-color: #f0f2f5; /* A slightly softer background */
     color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .app-container {
-    display: grid;
-    grid-template-areas:
-        "header header"
-        "controls visualization"
-        "legend visualization";
-    grid-template-columns: 350px 1fr;
-    grid-gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: flex; /* Use flexbox for overall layout */
+    flex-direction: column; /* Stack header, main content, footer vertically */
+    min-height: 100vh; /* Ensure app takes at least full viewport height */
+    max-width: 1600px; /* Max width for very large screens */
+    margin: 0 auto; /* Center the app container */
 }
 
 header {
-    grid-area: header;
+    background-color: #ffffff;
+    padding: 15px 25px;
+    border-bottom: 1px solid #e8e8e8;
     text-align: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+    box-shadow: 0 2px 8px #f0f1f2;
+    z-index: 10; /* Keep header above other content if overlapping happens */
 }
 
-.controls-panel {
-    grid-area: controls;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #2c3e50;
+}
+
+.main-content-area {
+    display: flex; /* Horizontal layout for controls, viz, legend */
+    flex-grow: 1; /* Allow this area to take up remaining vertical space */
+    padding: 20px;
+    gap: 20px; /* Space between columns */
+}
+
+.controls-column {
+    display: flex;
+    flex-direction: column; /* Stack controls and legend vertically */
+    width: 360px; /* Fixed width for the controls/legend column */
+    min-width: 320px; /* Minimum width before it gets too squished */
+    gap: 20px; /* Space between ControlsPanel and LegendPanel */
+}
+
+.controls-panel,
+.legend-panel {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.controls-panel h2,
+.legend-panel h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: #34495e;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.visualization-column {
+    flex-grow: 1; /* Visualization takes remaining horizontal space */
+    display: flex; /* To help center chart if needed, or manage its size */
+    flex-direction: column;
+    min-width: 400px; /* Minimum width for the chart area */
 }
 
 .visualization-panel {
-    grid-area: visualization;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    min-height: 400px; /* For chart */
-    display: flex;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    flex-grow: 1; /* Allow panel to grow within its column */
+    display: flex; /* Use flex to manage inner content (h2 and chart container) */
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
-.legend-panel {
-    grid-area: legend;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+.visualization-panel h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #34495e;
+    text-align: center;
 }
+
+/* This div will wrap the ResponsiveContainer for the chart */
+.chart-container {
+    width: 100%;
+    /* min-height: 450px; You set height on ResponsiveContainer or its direct parent */
+    flex-grow: 1; /* Make chart container take available space */
+    position: relative; /* Important for tooltips or absolute positioned elements within */
+}
+
 
 .control-group {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 .control-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 6px;
+    font-weight: 500; /* Slightly less bold */
     font-size: 0.9em;
+    color: #555;
 }
 
 .control-group input[type="number"],
 .control-group select {
-    width: calc(100% - 12px); /* Account for padding/border */
-    padding: 8px;
-    border: 1px solid #ccc;
+    width: 100%; /* Make input fill container */
+    padding: 10px;
+    border: 1px solid #d9d9d9;
     border-radius: 4px;
-    font-size: 1em;
+    font-size: 0.95em;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    transition: all 0.3s;
 }
+
+.control-group input[type="number"]:focus,
+.control-group select:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    outline: 0;
+}
+
 .control-group input[type="number"]:disabled {
-    background-color: #eee;
+    background-color: #f5f5f5;
     cursor: not-allowed;
+    color: #bfbfbf;
 }
 
-
-.display-value {
+.control-group .display-value {
     font-weight: bold;
     color: #007bff;
+    font-size: 1em;
+    padding: 8px 0;
+    display: inline-block;
 }
 
+.control-group span:not(.display-value) { /* For hint texts like (Derived from α) */
+    font-size: 0.8em;
+    color: #777;
+    display: block;
+    margin-top: 4px;
+}
+
+
 .legend-item {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 0.9em;
+    display: flex;
+    align-items: center;
 }
 .legend-item input[type="checkbox"] {
-    margin-right: 8px;
+    margin-right: 10px;
+    /* Custom checkbox styling can be added here if desired */
 }
 
 footer {
-    grid-area: footer; /* This won't work with current grid, but good for global messages */
+    padding: 15px 25px;
     text-align: center;
-    margin-top: 20px;
-    font-style: italic;
-    color: #777;
+    font-size: 0.85em;
+    color: #888;
+    border-top: 1px solid #e8e8e8;
+    background-color: #fafafa;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+.footer-debug-info {
+    font-size: 0.8em;
+    margin-top: 10px;
+    padding:10px;
+    background:#f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+    text-align: left;
+    line-height: 1.4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) { /* Adjust breakpoint as needed */
+    .main-content-area {
+        flex-direction: column; /* Stack controls and viz vertically */
+    }
+    .controls-column {
+        width: 100%; /* Controls/legend take full width */
+        min-width: unset;
+        flex-direction: row; /* Controls and Legend side-by-side if space allows */
+        flex-wrap: wrap; /* Allow them to wrap on smaller screens */
+    }
+    .controls-panel, .legend-panel {
+        flex-basis: calc(50% - 10px); /* Try to fit two per row, accounting for gap */
+        min-width: 280px; /* Min width for each panel */
+        flex-grow: 1;
+    }
+    .visualization-column {
+        width: 100%;
+    }
+    .chart-container {
+        min-height: 350px; /* Adjust chart height for smaller screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .controls-column {
+        flex-direction: column; /* Stack controls and legend again on very small screens */
+    }
+    .controls-panel, .legend-panel {
+        flex-basis: 100%; /* Each takes full width */
+    }
+    header h1 {
+        font-size: 1.5em;
+    }
+    .main-content-area {
+        padding: 10px;
+        gap: 10px;
+    }
+    .controls-panel, .legend-panel, .visualization-panel {
+        padding: 15px;
+    }
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 1;
+}
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0.8;
 }

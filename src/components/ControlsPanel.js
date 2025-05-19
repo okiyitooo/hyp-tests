@@ -46,7 +46,7 @@ const ControlsPanel = () => {
                 <input
                     type="number"
                     id="h0Value"
-                    name="h0Value"
+                    name="h0_Value"
                     value={h0Value}
                     onChange={handleInputChange}
                     step={isMeanTest ? "1" : "0.01"}
@@ -57,7 +57,7 @@ const ControlsPanel = () => {
 
             <div className="control-group">
                 <label htmlFor="haType">Alternative Hypothesis (Hₐ):</label>
-                <select id="haType" name="haType" value={haType} onChange={handleInputChange}>
+                <select id="haType" name="ha_Type" value={haType} onChange={handleInputChange}>
                     <option value="≠">≠ H₀ (Two-tailed)</option>
                     <option value=">">&gt; H₀ (Right-tailed)</option>
                     <option value="<">&lt; H₀ (Left-tailed)</option>
@@ -69,7 +69,7 @@ const ControlsPanel = () => {
                 <input
                     type="number"
                     id="actualParam"
-                    name="actualParam"
+                    name="actual_Param"
                     value={actualParam}
                     onChange={handleInputChange}
                     step={isMeanTest ? "1" : "0.01"}
@@ -83,7 +83,7 @@ const ControlsPanel = () => {
                 <input
                     type="number"
                     id="sampleSize"
-                    name="sampleSize"
+                    name="sample_Size"
                     value={sampleSize}
                     onChange={handleInputChange}
                     min="1"
@@ -97,12 +97,12 @@ const ControlsPanel = () => {
                     <input
                         type="number"
                         id="stdDev"
-                        name="stdDev"
+                        name="std_Dev"
                         value={stdDev}
                         onChange={handleInputChange}
                         step="0.1"
                         min="0.001"
-                        disabled={!isMeanTest}
+                        // disabled={!isMeanTest}
                     />
                 </div>
             )}
@@ -148,7 +148,7 @@ const ControlsPanel = () => {
                 <label htmlFor="parameterToAdjustOnPowerDrag">When dragging Power, adjust:</label>
                 <select
                     id="parameterToAdjustOnPowerDrag"
-                    name="parameterToAdjust" // Name for reducer in SET_PARAM
+                    name="parameterToAdjust"
                     value={parameterToAdjustOnPowerDrag}
                     onChange={(e) => dispatch({type: 'SET_PARAMETER_TO_ADJUST', payload: e.target.value })}
                 >
